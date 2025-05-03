@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/todo.dart';
 import '../widgets/todo_item.dart';
 
@@ -13,6 +15,32 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Todo> _todos = [];
   final TextEditingController _controller = TextEditingController();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTodos();
+  }
+
+  Future<void> _loadTodos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? todosString = prefs.getString('todos');
+    if (todosString != null) {
+      final List decoded = jsonDecode(todosString);
+      final loadedTodos = decoded.map((e) => Todo.fromJson(e)).toList();
+      setState(() {
+        _todos.addAll(loadedTodos.reversed); // reversed supaya urutan sesuai
+      });
+    }
+  }
+
+  Future<void> _saveTodos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String todosString = jsonEncode(
+      _todos.map((e) => e.toJson()).toList(),
+    );
+    await prefs.setString('todos', todosString);
+  }
 
   void _addTodo() {
     final text = _controller.text.trim();
@@ -32,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _controller.clear();
       _listKey.currentState?.insertItem(0);
     });
+    _saveTodos();
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -61,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: const Duration(milliseconds: 300),
       );
     });
+    _saveTodos();
   }
 
   void _toggleTodo(String id) {
@@ -68,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final todo = _todos.firstWhere((todo) => todo.id == id);
       todo.isDone = !todo.isDone;
     });
+    _saveTodos();
   }
 
   @override
