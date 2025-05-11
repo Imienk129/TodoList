@@ -104,7 +104,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Daftar Tugas')),
+      appBar: AppBar(
+        title: const Text(
+          'Daftar Tugas',
+          style: TextStyle(color: Colors.green, fontSize: 25),
+        ),
+      ),
       body: Column(
         children: [
           Padding(
@@ -125,10 +130,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 final todo = _todos[index];
                 return SizeTransition(
                   sizeFactor: animation,
-                  child: TodoItem(
-                    todo: todo,
-                    onToggle: _toggleTodo,
-                    onDelete: _deleteTodoWithAnimation,
+                  child: Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    elevation: 4, // tinggi bayangan
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Colors.grey.shade300, width: 1),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TodoItem(
+                        todo: todo,
+                        onToggle: _toggleTodo,
+                        onDelete: _deleteTodoWithAnimation,
+                      ),
+                    ),
                   ),
                 );
               },

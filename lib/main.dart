@@ -13,7 +13,9 @@ class TodoApp extends StatelessWidget {
     return MaterialApp(
       title: 'Daftar Tugas',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.teal),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       home: const HomeScreen(),
     );
   }
